@@ -2,11 +2,13 @@ package com.melody.j60870.datapack.init;
 
 import com.melody.j60870.datapack.config.ConnectionNettySettings;
 import com.melody.j60870.datapack.decode.ApduDecoder;
+import com.melody.j60870.datapack.decode.FrameCat;
 import com.melody.j60870.datapack.encode.ApduEncoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -51,7 +53,12 @@ public class ServerInit extends ChannelInitializer<SocketChannel> {
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ch.config().setTcpNoDelay(true);
-		ch.pipeline().addLast(new ApduEncoder(settings)).addLast(new ApduDecoder(settings)).addLast().addLast("Init", new ServerHandler(settings));
+		ch.pipeline()
+				.addLast(new FrameCat())
+				.addLast(new ApduEncoder(settings))
+				.addLast(new ApduDecoder(settings))
+				.addLast(new IdleStateHandler(settings.maxIdleTime, settings.maxIdleTime, settings.maxIdleTime))
+				.addLast("Init", new ServerHandler(settings));
 		map.put(ch.id(), ch);
 	}
 	

@@ -68,7 +68,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		//				@Override
 		//				public void run() {
 		//					Thread.currentThread().setName("aSduListener");
-		//					aSduListener.newASdu(aPdu.getASdu());
+		//					aSduListener.newASdu(a/ Pdu.getASdu());
 		//				}
 		//			});
 		//		}
@@ -171,7 +171,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	
 	private void sendSFormatPdu(ChannelHandlerContext ctx) throws IOException {
 		
-		APduNetty sf = new APduNetty(0, receiveSequenceNumber, APduNetty.ApciType.S_FORMAT, null);
+		APduNetty sf = new APduNetty(sendSequenceNumber, receiveSequenceNumber, APduNetty.ApciType.S_FORMAT, null);
 		
 		ctx.channel().writeAndFlush(sf);
 		

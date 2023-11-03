@@ -29,8 +29,9 @@ public class MainHandler extends MessageHandler {
 		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		Resource[] resources = new Resource[0];
 		try {
+			
 			// todo 这个路径可以弄成配置文件
-			resources = resolver.getResources("classpath*:com/sac/one_zero_four/datapack/message/handlers/*.class");
+			resources = resolver.getResources(("classpath*:" + MainHandler.class.getPackage() + ".handlers.*-class").replace('.', '/').replace("package ", "").replace('-','.'));
 		} catch (IOException e) {
 		}
 		SimpleMetadataReaderFactory simpleMetadataReaderFactory = new SimpleMetadataReaderFactory();

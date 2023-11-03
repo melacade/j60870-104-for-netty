@@ -22,10 +22,6 @@ public class ApduDecoder extends ByteToMessageDecoder {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		byte aByte = in.getByte(0);
-		byte len = in.getByte(1);
-		if (in.readableBytes() < len) {
-			return;
-		}
 		if (aByte != 0x68) {
 			log.error("错误的报文起始");
 			ctx.close();

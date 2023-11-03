@@ -11,7 +11,7 @@ public final class ConnectionNettySettings {
     public int maxTimeNoAckReceived = 15000;
     public int maxTimeNoAckSent = 10000;
     public int maxIdleTime = 20000;
-    public int maxUnconfirmedIPdusReceived = 8;
+    public int maxUnconfirmedIPdusReceived = 1;
     public int maxNumOfOutstandingIPdus = 12;
     public ConnectionNettySettings() {
     }
