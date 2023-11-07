@@ -67,7 +67,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		} else if (cot == CauseOfTransmission.DEACTIVATION) {
 			cot = CauseOfTransmission.DEACTIVATION_CON;
 		}
-		
+		ctx.channel().writeAndFlush(new ASduNetty(aSdu.getTypeIdentification(), aSdu.isSequenceOfElements(), cot, aSdu.isTestFrame(), aSdu.isNegativeConfirm(), aSdu.getOriginatorAddress(), aSdu.getCommonAddress(), aSdu.getInformationObjects()));
+	}
+	
+	public void sendEndConfirmation(ASduNetty aSdu, ChannelHandlerContext ctx) {
+		CauseOfTransmission cot = aSdu.getCauseOfTransmission();
+		if (cot == CauseOfTransmission.ACTIVATION) {
+			cot = CauseOfTransmission.ACTIVATION_TERMINATION;
+		}
 		ctx.channel().writeAndFlush(new ASduNetty(aSdu.getTypeIdentification(), aSdu.isSequenceOfElements(), cot, aSdu.isTestFrame(), aSdu.isNegativeConfirm(), aSdu.getOriginatorAddress(), aSdu.getCommonAddress(), aSdu.getInformationObjects()));
 	}
 	public void handleIFrame(final APduNetty aPdu, ChannelHandlerContext ctx) throws IOException {
@@ -190,6 +197,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		cause.printStackTrace();
 		ctx.channel().close();
 	}
 	

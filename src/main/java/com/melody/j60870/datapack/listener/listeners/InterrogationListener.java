@@ -31,19 +31,20 @@ public class InterrogationListener implements IframeListener {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
 		// 发送单点遥信
-		ASduNetty aSduNetty = new ASduNetty(ASduTypeNetty.M_SP_NA_1, false, CauseOfTransmission.SPONTANEOUS, false,false,0,0,new InformationNettyObject(0, new InformationNettyElement[][]{
+		ASduNetty aSduNetty = new ASduNetty(ASduTypeNetty.M_SP_NA_1, false, CauseOfTransmission.SPONTANEOUS, false, false, 0, 0, new InformationNettyObject(0, new InformationNettyElement[][]{
 				{
 						new IeSinglePointWithQualityNetty(false, false, false, false, false)
 				}
 		}));
 		
 		try {
-			mainHandler.send(aSduNetty,ctx);
+			mainHandler.send(aSduNetty, ctx);
+			mainHandler.sendEndConfirmation(aPduNetty.getASdu(), ctx);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		
 	}
 	
 	@Override

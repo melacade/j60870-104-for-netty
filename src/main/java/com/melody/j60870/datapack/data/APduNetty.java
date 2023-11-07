@@ -174,6 +174,12 @@ public final class APduNetty {
             buffer.writeByte(0x01);
             buffer.writeByte(0x00);
             writeReceiveSeqNumTo(buffer);
+        } else if (apciType == ApciType.TESTFR_ACT) {
+            buffer.writeByte(0x43);
+            setV3To5zero(buffer);
+        } else if (apciType == ApciType.TESTFR_CON) {
+            buffer.writeByte(0x83);
+            setV3To5zero(buffer);
         }
         buffer.setByte(1,buffer.readableBytes()-2);
         return length + 2;

@@ -34,7 +34,7 @@ public class StopDtHandler extends com.melody.j60870.datapack.message.MessageHan
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		ctx.writeAndFlush(new APduNetty(0, 0, APduNetty.ApciType.STOPDT_CON, null));
+		ctx.channel().writeAndFlush(new APduNetty(0, 0, APduNetty.ApciType.STOPDT_CON, null));
 		return netty;
 	}
 	
