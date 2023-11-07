@@ -25,7 +25,7 @@ public class IeLengthOfFileOrSectionNetty extends InformationNettyElement {
 
     @Override
     public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i);
+//        buffer.writerIndex(i);
         buffer.writeByte((byte) value);
         buffer.writeByte((byte) (value >> 8));
         buffer.writeByte((byte) (value >> 16));

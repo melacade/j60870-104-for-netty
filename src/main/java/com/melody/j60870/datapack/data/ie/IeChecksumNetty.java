@@ -21,7 +21,7 @@ public class IeChecksumNetty extends InformationNettyElement {
     
     @Override
     public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i).writeByte((byte) value);
+        buffer.writeByte((byte) value);
         return 1;
     }
 

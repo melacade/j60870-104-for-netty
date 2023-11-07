@@ -90,14 +90,12 @@ public class IeTime56Netty extends InformationNettyElement {
     static IeTime56Netty decode(ByteBuf is) throws IOException {
         byte[] value = new byte[LENGTH];
         is.readBytes(value);
-
         return new IeTime56Netty(value);
     }
     
     @Override
     public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i);
-        buffer.writeBytes(buffer);
+        buffer.writeBytes(value);
         return LENGTH;
     }
 

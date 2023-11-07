@@ -175,7 +175,7 @@ public final class APduNetty {
             buffer.writeByte(0x00);
             writeReceiveSeqNumTo(buffer);
         }
-        buffer.setByte(1,(byte) length);
+        buffer.setByte(1,buffer.readableBytes()-2);
         return length + 2;
         
     }

@@ -3,6 +3,9 @@ package com.melody.j60870.datapack.init;
 import com.melody.j60870.datapack.config.ConnectionNettySettings;
 import com.melody.j60870.datapack.data.APduNetty;
 import com.melody.j60870.datapack.data.ASduNetty;
+import com.melody.j60870.datapack.data.CauseOfTransmission;
+import com.melody.j60870.datapack.listener.IframeListener;
+import com.melody.j60870.datapack.listener.MainListener;
 import com.melody.j60870.datapack.message.MainHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -30,6 +33,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	private int acknowledgedReceiveSequenceNumber;
 	private int acknowledgedSendSequenceNumber;
 	private int sendSequenceNumber;
+	private IframeListener iframeListener = new MainListener();
 	
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
@@ -56,7 +60,16 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		}
 		ctx.fireChannelRead(msg);
 	}
-	
+	public void sendConfirmation(ASduNetty aSdu, ChannelHandlerContext ctx) throws IOException {
+		CauseOfTransmission cot = aSdu.getCauseOfTransmission();
+		if (cot == CauseOfTransmission.ACTIVATION) {
+			cot = CauseOfTransmission.ACTIVATION_CON;
+		} else if (cot == CauseOfTransmission.DEACTIVATION) {
+			cot = CauseOfTransmission.DEACTIVATION_CON;
+		}
+		
+		ctx.channel().writeAndFlush(new ASduNetty(aSdu.getTypeIdentification(), aSdu.isSequenceOfElements(), cot, aSdu.isTestFrame(), aSdu.isNegativeConfirm(), aSdu.getOriginatorAddress(), aSdu.getCommonAddress(), aSdu.getInformationObjects()));
+	}
 	public void handleIFrame(final APduNetty aPdu, ChannelHandlerContext ctx) throws IOException {
 		
 		updateReceiveSeqNum(aPdu.getSendSeqNumber(), ctx);
@@ -72,7 +85,9 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		//				}
 		//			});
 		//		}
-		
+		if (iframeListener != null) {
+			iframeListener.doOn(aPdu, ctx);
+		}
 		int numUnconfirmedIPdusReceived = sequenceNumberDiff(receiveSequenceNumber, acknowledgedReceiveSequenceNumber);
 		
 		if (numUnconfirmedIPdusReceived >= settings.getMaxUnconfirmedIPdusReceived()) {
@@ -94,8 +109,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	
 	private void verifySeqNumber(int sendSeqNumber) throws IOException {
 		if (receiveSequenceNumber != sendSeqNumber) {
-			String msg = MessageFormat.format("Got unexpected send sequence number: {0}, expected: {1}.", sendSeqNumber,
-					receiveSequenceNumber);
+			String msg = MessageFormat.format("Got unexpected send sequence number: {0}, expected: {1}.", sendSeqNumber, receiveSequenceNumber);
 			throw new IOException(msg);
 		}
 	}
@@ -107,9 +121,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		
 		int diff = sequenceNumberDiff(receiveSeqNumber, acknowledgedSendSequenceNumber);
 		if (diff > sequenceNumberDiff(sendSequenceNumber, acknowledgedSendSequenceNumber)) {
-			String msg = MessageFormat.format(
-					"Got unexpected receive sequence number: {0}, expected a number between: {1} and {2}.",
-					receiveSeqNumber, acknowledgedSendSequenceNumber, sendSequenceNumber);
+			String msg = MessageFormat.format("Got unexpected receive sequence number: {0}, expected a number between: {1} and {2}.", receiveSeqNumber, acknowledgedSendSequenceNumber, sendSequenceNumber);
 			throw new IOException(msg);
 		}
 		
@@ -150,7 +162,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 			}
 		}
 		
-		if (ctx.channel().isActive()) {
+		if (!ctx.channel().isActive()) {
 			throw new IOException("connection closed");
 		}
 		
@@ -164,8 +176,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		if (oldSendSequenceNumber > sendSequenceNumber) {
 			sendSFormatPdu(ctx);
 		}
-		
-		
 		ctx.channel().writeAndFlush(requestAPdu);
 	}
 	
@@ -176,6 +186,11 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 		ctx.channel().writeAndFlush(sf);
 		
 		acknowledgedReceiveSequenceNumber = receiveSequenceNumber;
+	}
+	
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		ctx.channel().close();
 	}
 	
 }

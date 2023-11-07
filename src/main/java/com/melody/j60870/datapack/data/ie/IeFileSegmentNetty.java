@@ -29,7 +29,7 @@ public class IeFileSegmentNetty extends InformationNettyElement {
 
     @Override
    public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i);
+//        buffer.writerIndex(i);
         buffer.writeByte((byte) length);
         buffer.writeBytes(segment);
         return length + 1;

@@ -36,7 +36,7 @@ public class IeTime24Netty extends InformationNettyElement {
 	
 	@Override
 	public int encode(ByteBuf buffer, int i) {
-		buffer.writerIndex(i);
+//		buffer.writerIndex(i);
 		buffer.writeBytes(value);
 		return 3;
 	}

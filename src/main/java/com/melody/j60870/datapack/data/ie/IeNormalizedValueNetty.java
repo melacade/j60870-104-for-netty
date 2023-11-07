@@ -48,7 +48,7 @@ public class IeNormalizedValueNetty extends InformationNettyElement {
 
     @Override
     public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i);
+//        buffer.writerIndex(i);
         buffer.writeShortLE(value);
         return 2;
     }

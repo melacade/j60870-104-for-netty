@@ -28,7 +28,7 @@ public class IeQualifierOfParameterOfMeasuredValuesNetty extends InformationNett
     
     @Override
     public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i);
+//        buffer.writerIndex(i);
         byte temp  = (byte) kindOfParameter;
         if (change) {
             temp |= 0x40;

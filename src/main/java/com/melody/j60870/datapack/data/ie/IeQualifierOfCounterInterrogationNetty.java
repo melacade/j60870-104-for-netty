@@ -25,7 +25,7 @@ public class IeQualifierOfCounterInterrogationNetty extends InformationNettyElem
     
     @Override
     public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i);
+//        buffer.writerIndex(i);
         buffer.writeByte((byte) (request | (freeze << 6)));
         return 1;
     }

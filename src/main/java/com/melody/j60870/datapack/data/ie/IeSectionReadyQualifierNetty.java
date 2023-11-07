@@ -26,7 +26,7 @@ public class IeSectionReadyQualifierNetty extends InformationNettyElement {
 
     @Override
     public int encode(ByteBuf buffer, int i) {
-        buffer.writerIndex(i);
+//        buffer.writerIndex(i);
         
         byte temp = (byte) value;
         if (sectionNotReady) {

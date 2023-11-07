@@ -41,7 +41,7 @@ public class IeBinaryStateInformationNetty extends InformationNettyElement {
 	
 	@Override
 	public int encode(ByteBuf buffer, int i) {
-		buffer.writerIndex(i);
+//		buffer.writerIndex(i);
 		buffer.writeIntLE(value);
 		return 4;
 	}
