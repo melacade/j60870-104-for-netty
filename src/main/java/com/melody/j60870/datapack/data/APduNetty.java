@@ -150,8 +150,10 @@ public final class APduNetty {
         int length = CONTROL_FIELDS_LENGTH;
         buffer.writerIndex(2);
         if (apciType == APduNetty.ApciType.I_FORMAT) {
-            buffer.writeShortLE(sendSeqNum);
-            buffer.writeShortLE(receiveSeqNum);
+            buffer.writeByte((byte)(sendSeqNum << 1));
+            buffer.writeByte((byte)(sendSeqNum >> 7));
+            buffer.writeByte((byte)(receiveSeqNum << 1));
+            buffer.writeByte((byte)(receiveSeqNum >> 7));
             length += aSdu.encode(buffer, 6, settings);
         }
         else if (apciType == APduNetty.ApciType.STARTDT_ACT) {

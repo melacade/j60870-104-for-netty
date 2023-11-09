@@ -21,12 +21,12 @@ public class ApduDecoder extends ByteToMessageDecoder {
 	
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		byte aByte = in.getByte(0);
-		if (aByte != 0x68) {
-			log.error("错误的报文起始");
-			ctx.close();
-			return;
-		}
+//		byte aByte = in.getByte(0);
+//		if (aByte != 0x68) {
+//			log.error("错误的报文起始");
+//			ctx.close();
+//			return;
+//		}
 		APduNetty decode = APduNetty.decode(in, settings);
 		out.add(decode);
 	}

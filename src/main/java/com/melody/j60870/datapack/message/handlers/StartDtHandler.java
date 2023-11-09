@@ -1,9 +1,13 @@
 package com.melody.j60870.datapack.message.handlers;
 
 import com.melody.j60870.datapack.data.APduNetty;
+import com.melody.j60870.datapack.init.ServerHandler;
 import com.melody.j60870.datapack.message.MainHandler;
 import com.melody.j60870.datapack.message.MessageHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
+
+import java.io.IOException;
 
 import static com.melody.j60870.datapack.data.APduNetty.ApciType.STARTDT_ACT;
 
@@ -26,9 +30,16 @@ public class StartDtHandler extends MessageHandler {
 	
 	@Override
 	public APduNetty toClient(APduNetty netty, ChannelHandlerContext ctx) {
-		APduNetty aPduNetty = new APduNetty(0, 0, APduNetty.ApciType.STARTDT_CON, null);
-		ctx.channel().writeAndFlush(aPduNetty);
-		return aPduNetty;
+
+		
+		ChannelHandler init = ctx.pipeline().get("Init");
+		ServerHandler serverHandler = (ServerHandler) init;
+		try {
+			serverHandler.sendStart(ctx);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return netty;
 	}
 	
 }

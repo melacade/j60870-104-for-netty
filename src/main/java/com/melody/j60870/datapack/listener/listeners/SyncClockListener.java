@@ -24,8 +24,10 @@ public class SyncClockListener implements IframeListener {
 //							new IeTime56Netty(System.currentTimeMillis())
 //					}})
 //			), ctx);
+			// 确认同步时间消息
+			
 			serverHandler.sendConfirmation(aPduNetty.getASdu(),ctx);
-			serverHandler.sendSFormatIfUnconfirmedAPdu(ctx);
+//			serverHandler.sendSFormatIfUnconfirmedAPdu(ctx);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

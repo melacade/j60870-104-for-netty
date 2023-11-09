@@ -5,7 +5,6 @@ import com.melody.j60870.datapack.data.ASduNetty;
 import com.melody.j60870.datapack.data.ASduTypeNetty;
 import com.melody.j60870.datapack.data.CauseOfTransmission;
 import com.melody.j60870.datapack.data.ie.IeSinglePointWithQualityNetty;
-import com.melody.j60870.datapack.data.ie.InformationNettyElement;
 import com.melody.j60870.datapack.data.ie.InformationNettyObject;
 import com.melody.j60870.datapack.init.ServerHandler;
 import com.melody.j60870.datapack.listener.IframeListener;
@@ -27,16 +26,13 @@ public class InterrogationListener implements IframeListener {
 		ChannelHandler init = ctx.pipeline().get("Init");
 		ServerHandler mainHandler = (ServerHandler) init;
 		try {
+			// 确认总招消息
 			mainHandler.sendConfirmation(aPduNetty.getASdu(), ctx);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		// 发送单点遥信
-		ASduNetty aSduNetty = new ASduNetty(ASduTypeNetty.M_SP_NA_1, false, CauseOfTransmission.SPONTANEOUS, false, false, 0, 0, new InformationNettyObject(0, new InformationNettyElement[][]{
-				{
-						new IeSinglePointWithQualityNetty(false, false, false, false, false)
-				}
-		}));
+		// 发送单点信息
+		ASduNetty aSduNetty = new ASduNetty(ASduTypeNetty.M_SP_NA_1, false, CauseOfTransmission.SPONTANEOUS, false, false, 0, 0, new InformationNettyObject(0, new IeSinglePointWithQualityNetty(false,false,false,false,false)));
 		
 		try {
 			mainHandler.send(aSduNetty, ctx);
