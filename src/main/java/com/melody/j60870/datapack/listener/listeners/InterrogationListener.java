@@ -23,6 +23,9 @@ public class InterrogationListener implements IframeListener {
 	@Override
 	public void on(APduNetty aPduNetty, ChannelHandlerContext ctx) {
 		log.info("触发总召");
+		if (log.isDebugEnabled()) {
+			log.debug("收到总招命令：{}",aPduNetty.getASdu());
+		}
 		ChannelHandler init = ctx.pipeline().get("Init");
 		ServerHandler mainHandler = (ServerHandler) init;
 		try {

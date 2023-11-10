@@ -23,18 +23,18 @@ import static com.melody.j60870.datapack.data.ASduTypeNetty.C_CI_NA_1;
 public class CounterInterrogationListener implements IframeListener {
 	
 	@Override
-	public void on(APduNetty aPduNetty, ChannelHandlerContext ctx) {
+	public void on(APduNetty aPduNetty, ChannelHandlerContext ctx) throws RuntimeException {
 		log.info("触发电镀总招");
 		ChannelHandler init = ctx.pipeline().get("Init");
 		ServerHandler serverHandler = (ServerHandler) init;
-		
+
 		try {
 			//			// 确认电镀总招
 			serverHandler.sendConfirmation(aPduNetty.getASdu(), ctx);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		ASduNetty aSduNetty = new ASduNetty(ASduTypeNetty.M_SP_NA_1, false, CauseOfTransmission.ACTIVATION_CON, false, false, 0, 65535,new InformationNettyObject(0,new IeSinglePointWithQualityNetty(false,false,false,false,false)));
+		ASduNetty aSduNetty = new ASduNetty(ASduTypeNetty.M_SP_NA_1, false, CauseOfTransmission.ACTIVATION_CON, false, false, 0, 65535, new InformationNettyObject(0, new IeSinglePointWithQualityNetty(false, false, false, false, false)));
 		try {
 			serverHandler.send(aSduNetty, ctx);
 			serverHandler.sendEndConfirmation(aPduNetty.getASdu(), ctx);

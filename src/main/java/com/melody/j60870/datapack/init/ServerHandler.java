@@ -101,7 +101,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	 * @param ctx
 	 */
 	public void sendUnknownCot(ASduNetty aSdu, ChannelHandlerContext ctx) throws IOException {
-		
 		this.send(new ASduNetty(aSdu.getTypeIdentification(), aSdu.isSequenceOfElements(), CauseOfTransmission.UNKNOWN_CAUSE_OF_TRANSMISSION, aSdu.isTestFrame(), aSdu.isNegativeConfirm(), aSdu.getOriginatorAddress(), aSdu.getCommonAddress(), aSdu.getInformationObjects()), ctx);
 	}
 	
