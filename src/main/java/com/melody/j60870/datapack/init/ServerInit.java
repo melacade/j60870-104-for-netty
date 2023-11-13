@@ -58,7 +58,8 @@ public class ServerInit extends ChannelInitializer<SocketChannel> {
 				.addLast(new ApduEncoder(settings))
 				.addLast(new ApduDecoder(settings))
 				.addLast(new IdleStateHandler(settings.maxIdleTime, settings.maxIdleTime, settings.maxIdleTime))
-				.addLast("Init", new ServerHandler(settings));
+				.addLast("Init", new ServerHandler(settings, map));
+				
 		map.put(ch.id(), ch);
 	}
 	

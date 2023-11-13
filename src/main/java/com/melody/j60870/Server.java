@@ -2,7 +2,8 @@ package com.melody.j60870;
 
 import com.melody.j60870.datapack.config.ConnectionNettySettings;
 import com.melody.j60870.datapack.config.ConnectionSettings;
-import com.melody.j60870.datapack.data.APduNetty;
+import com.melody.j60870.datapack.data.ASduNetty;
+import com.melody.j60870.datapack.init.ServerHandler;
 import com.melody.j60870.datapack.init.ServerInit;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The server is used to start listening for IEC 60870-5-104 client connections.
@@ -28,7 +28,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class Server {
 	
-	private Map<ChannelId,SocketChannel> clients = new ConcurrentHashMap<>();
+	private final Map<ChannelId,SocketChannel> clients = new ConcurrentHashMap<>();
+	private ChannelFuture svr;
+	private NioEventLoopGroup boos;
+	private NioEventLoopGroup worker;
 	private final int port;
 	private final InetAddress bindAddr;
 	private final int backlog;
@@ -50,8 +53,6 @@ public class Server {
 		settings = new ConnectionNettySettings(builder.settings);
 	}
 	
-	AtomicInteger count = new AtomicInteger(0);
-	
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -64,26 +65,27 @@ public class Server {
 	 * @throws IOException if any kind of error occurs while creating the server socket.
 	 */
 	public void start() throws IOException, InterruptedException {
-		NioEventLoopGroup boos = new NioEventLoopGroup();
-		NioEventLoopGroup worker = new NioEventLoopGroup();
+		boos = new NioEventLoopGroup();
+		worker = new NioEventLoopGroup();
 		try {
 			server = new ServerBootstrap().channel(NioServerSocketChannel.class).group(boos, worker);
 			server.childHandler(new ServerInit(settings, clients));
-			ChannelFuture sync = server.bind(port).sync();
+			svr = server.bind(port).sync();
 			log.info("正在监听端口{}", port);
-			sync.channel().closeFuture().sync();
+			svr.channel().closeFuture().sync();
+			svr = null;
 		} finally {
-			boos.shutdownGracefully();
-			worker.shutdownGracefully();
+			stop();
 		}
 	}
 	
-	public void send(APduNetty data) {
+	public void send(ASduNetty data) throws IOException {
 		log.info("发送数据：{}", data);
 		for (Map.Entry<ChannelId,SocketChannel> next : clients.entrySet()) {
 			ChannelId key = next.getKey();
 			SocketChannel value = next.getValue();
-			value.writeAndFlush(data);
+			ServerHandler init = (ServerHandler) value.pipeline().get("Init");
+			init.send(data, value.pipeline().firstContext());
 			log.info("客户端{}", key);
 		}
 	}
@@ -91,23 +93,20 @@ public class Server {
 	/**
 	 * Stop listening for new connections. Existing connections are not touched.
 	 */
-	public void stop() {
-		//        if (serverThread == null) {
-		//            return;
-		//        }
-		//
-		//        serverThread.stopServer();
-		//
-		//        if (this.settings.useSharedThreadPool()) {
-		//            ConnectionSettings.decrementConnectionsCounter();
-		//        }
-		//        else {
-		//            this.exec.shutdown();
-		//        }
-		//
-		//        serverThread = null;
-		
-		
+	public void stop() throws InterruptedException {
+		if (svr != null) {
+			svr.channel().close().sync();
+			svr = null;
+		}
+		if (boos != null) {
+			boos.shutdownGracefully();
+			boos = null;
+		}
+		if (worker != null) {
+			worker.shutdownGracefully();
+			worker = null;
+		}
+		clients.clear();
 	}
 	
 	/**

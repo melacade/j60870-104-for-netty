@@ -11,13 +11,16 @@ import com.melody.j60870.datapack.listener.IframeListener;
 import com.melody.j60870.datapack.listener.MainListener;
 import com.melody.j60870.datapack.message.MainHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -37,6 +40,18 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 	private int acknowledgedSendSequenceNumber;
 	private int sendSequenceNumber;
 	private IframeListener iframeListener = new MainListener();
+	private Map<ChannelId,SocketChannel> map;
+	
+	public ServerHandler(ConnectionNettySettings settings, Map<ChannelId,SocketChannel> map) {
+		this(settings);
+		this.map = map;
+	}
+	
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		this.map.remove(ctx.channel().id());
+		ctx.fireChannelInactive();
+	}
 	
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
