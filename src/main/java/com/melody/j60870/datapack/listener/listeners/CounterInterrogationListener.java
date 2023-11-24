@@ -6,7 +6,7 @@ import com.melody.j60870.datapack.data.ASduTypeNetty;
 import com.melody.j60870.datapack.data.CauseOfTransmission;
 import com.melody.j60870.datapack.data.ie.IeSinglePointWithQualityNetty;
 import com.melody.j60870.datapack.data.ie.InformationNettyObject;
-import com.melody.j60870.datapack.init.ServerHandler;
+import com.melody.j60870.datapack.init.ConnectionHandler;
 import com.melody.j60870.datapack.listener.IframeListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,7 +26,7 @@ public class CounterInterrogationListener implements IframeListener {
 	public void on(APduNetty aPduNetty, ChannelHandlerContext ctx) throws RuntimeException {
 		log.info("触发电镀总招");
 		ChannelHandler init = ctx.pipeline().get("Init");
-		ServerHandler serverHandler = (ServerHandler) init;
+		ConnectionHandler serverHandler = (ConnectionHandler) init;
 
 		try {
 			//			// 确认电镀总招
@@ -34,6 +34,7 @@ public class CounterInterrogationListener implements IframeListener {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		//模拟的电镀总招回复报文
 		ASduNetty aSduNetty = new ASduNetty(ASduTypeNetty.M_SP_NA_1, false, CauseOfTransmission.ACTIVATION_CON, false, false, 0, 65535, new InformationNettyObject(0, new IeSinglePointWithQualityNetty(false, false, false, false, false)));
 		try {
 			serverHandler.send(aSduNetty, ctx);

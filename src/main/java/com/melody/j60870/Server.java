@@ -3,7 +3,7 @@ package com.melody.j60870;
 import com.melody.j60870.datapack.config.ConnectionNettySettings;
 import com.melody.j60870.datapack.config.ConnectionSettings;
 import com.melody.j60870.datapack.data.ASduNetty;
-import com.melody.j60870.datapack.init.ServerHandler;
+import com.melody.j60870.datapack.init.ConnectionHandler;
 import com.melody.j60870.datapack.init.ServerInit;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -14,7 +14,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.openmuc.j60870.ServerEventListener;
 
-import javax.net.ServerSocketFactory;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
@@ -35,7 +34,6 @@ public class Server {
 	private final int port;
 	private final InetAddress bindAddr;
 	private final int backlog;
-	private final ServerSocketFactory serverSocketFactory;
 	private final int maxConnections;
 	private final List<String> allowedClientIps;
 	private ServerBootstrap server;
@@ -47,7 +45,6 @@ public class Server {
 		port = builder.port;
 		bindAddr = builder.bindAddr;
 		backlog = builder.backlog;
-		serverSocketFactory = builder.serverSocketFactory;
 		maxConnections = builder.maxConnections;
 		allowedClientIps = builder.allowedClientIps;
 		settings = new ConnectionNettySettings(builder.settings);
@@ -84,7 +81,7 @@ public class Server {
 		for (Map.Entry<ChannelId,SocketChannel> next : clients.entrySet()) {
 			ChannelId key = next.getKey();
 			SocketChannel value = next.getValue();
-			ServerHandler init = (ServerHandler) value.pipeline().get("Init");
+			ConnectionHandler init = (ConnectionHandler) value.pipeline().get("Init");
 			init.send(data, value.pipeline().firstContext());
 			log.info("客户端{}", key);
 		}
@@ -119,7 +116,6 @@ public class Server {
 		private int port = 2404;
 		private InetAddress bindAddr = null;
 		private int backlog = 0;
-		private ServerSocketFactory serverSocketFactory = ServerSocketFactory.getDefault();
 		private List<String> allowedClientIps = null;
 		
 		private int maxConnections = 100;
@@ -161,18 +157,7 @@ public class Server {
 			return this;
 		}
 		
-		/**
-		 * Sets the ServerSocketFactory to be used to create the ServerSocket. Default is
-		 * ServerSocketFactory.getDefault().
-		 *
-		 * @param socketFactory the ServerSocketFactory to be used to create the ServerSocket
-		 * @return this builder
-		 */
-		public Builder setSocketFactory(ServerSocketFactory socketFactory) {
-			this.serverSocketFactory = socketFactory;
-			return this;
-		}
-		
+
 		/**
 		 * Set the maximum number of client connections that are allowed in parallel.
 		 *

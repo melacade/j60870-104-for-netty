@@ -1,8 +1,7 @@
 package com.melody.j60870.datapack.message.handlers;
 
 import com.melody.j60870.datapack.data.APduNetty;
-import com.melody.j60870.datapack.init.ServerHandler;
-import com.melody.j60870.datapack.message.MainHandler;
+import com.melody.j60870.datapack.init.ConnectionHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -17,7 +16,7 @@ public class StopDtHandler extends com.melody.j60870.datapack.message.MessageHan
 	
 	@Override
 	protected void register() {
-		MainHandler.register(STOPDT_ACT, this);
+		com.melody.j60870.datapack.message.MainHandler.register(STOPDT_ACT, this);
 	}
 	
 	@Override
@@ -28,7 +27,7 @@ public class StopDtHandler extends com.melody.j60870.datapack.message.MessageHan
 	@Override
 	public APduNetty toClient(APduNetty netty, ChannelHandlerContext ctx) {
 		ChannelHandler init = ctx.pipeline().get("Init");
-		ServerHandler s = (ServerHandler) init;
+		ConnectionHandler s = (ConnectionHandler) init;
 		try {
 			s.sendSFormatIfUnconfirmedAPdu(ctx);
 		} catch (IOException e) {

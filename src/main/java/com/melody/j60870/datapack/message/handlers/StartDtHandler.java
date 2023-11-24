@@ -1,8 +1,7 @@
 package com.melody.j60870.datapack.message.handlers;
 
 import com.melody.j60870.datapack.data.APduNetty;
-import com.melody.j60870.datapack.init.ServerHandler;
-import com.melody.j60870.datapack.message.MainHandler;
+import com.melody.j60870.datapack.init.ConnectionHandler;
 import com.melody.j60870.datapack.message.MessageHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,7 +17,7 @@ public class StartDtHandler extends MessageHandler {
 	
 	@Override
 	protected void register() {
-		MainHandler.register(STARTDT_ACT, this);
+		com.melody.j60870.datapack.message.MainHandler.register(STARTDT_ACT, this);
 	}
 	
 	@Override
@@ -33,9 +32,9 @@ public class StartDtHandler extends MessageHandler {
 
 		
 		ChannelHandler init = ctx.pipeline().get("Init");
-		ServerHandler serverHandler = (ServerHandler) init;
+		ConnectionHandler serverHandler = (ConnectionHandler) init;
 		try {
-			serverHandler.sendStart(ctx);
+			serverHandler.sendConfirmStart(ctx);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

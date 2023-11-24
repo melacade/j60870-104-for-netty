@@ -3,7 +3,7 @@ package com.melody.j60870.datapack.listener.listeners;
 import com.melody.j60870.datapack.data.APduNetty;
 import com.melody.j60870.datapack.data.ie.IeSingleCommandNetty;
 import com.melody.j60870.datapack.data.ie.InformationNettyObject;
-import com.melody.j60870.datapack.init.ServerHandler;
+import com.melody.j60870.datapack.init.ConnectionHandler;
 import com.melody.j60870.datapack.listener.IframeListener;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class SingleCommandListener implements IframeListener {
 			log.debug("单点遥控命令遥控命令触发:选择 {}, 直行{}, 执行/撤销{}", informationObject1.isSelect(), !informationObject1.isSelect(), aPduNetty.getASdu().getCauseOfTransmission());
 		}
 		// 发送确认报文
-		ServerHandler init = (ServerHandler) ctx.pipeline().get("Init");
+		ConnectionHandler init = (ConnectionHandler) ctx.pipeline().get("Init");
 		try {
 			init.sendConfirmation(aPduNetty.getASdu(), ctx);
 		} catch (IOException e) {

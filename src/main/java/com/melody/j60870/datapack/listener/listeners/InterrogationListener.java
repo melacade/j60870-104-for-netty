@@ -6,7 +6,7 @@ import com.melody.j60870.datapack.data.ASduTypeNetty;
 import com.melody.j60870.datapack.data.CauseOfTransmission;
 import com.melody.j60870.datapack.data.ie.IeSinglePointWithQualityNetty;
 import com.melody.j60870.datapack.data.ie.InformationNettyObject;
-import com.melody.j60870.datapack.init.ServerHandler;
+import com.melody.j60870.datapack.init.ConnectionHandler;
 import com.melody.j60870.datapack.listener.IframeListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,7 +27,7 @@ public class InterrogationListener implements IframeListener {
 			log.debug("收到总招命令：{}",aPduNetty.getASdu());
 		}
 		ChannelHandler init = ctx.pipeline().get("Init");
-		ServerHandler mainHandler = (ServerHandler) init;
+		ConnectionHandler mainHandler = (ConnectionHandler) init;
 		try {
 			// 确认总招消息
 			mainHandler.sendConfirmation(aPduNetty.getASdu(), ctx);

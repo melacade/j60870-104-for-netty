@@ -1,8 +1,7 @@
 package com.melody.j60870.datapack.message.handlers;
 
 import com.melody.j60870.datapack.data.APduNetty;
-import com.melody.j60870.datapack.init.ServerHandler;
-import com.melody.j60870.datapack.message.MainHandler;
+import com.melody.j60870.datapack.init.ConnectionHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -17,7 +16,7 @@ public class SformatHandler extends com.melody.j60870.datapack.message.MessageHa
 	
 	@Override
 	protected void register() {
-		MainHandler.register(S_FORMAT, this);
+		com.melody.j60870.datapack.message.MainHandler.register(S_FORMAT, this);
 	}
 	
 	@Override
@@ -28,7 +27,7 @@ public class SformatHandler extends com.melody.j60870.datapack.message.MessageHa
 	@Override
 	public APduNetty toClient(APduNetty netty, ChannelHandlerContext ctx) {
 		ChannelHandler init = ctx.pipeline().get("Init");
-		ServerHandler init1 = (ServerHandler) init;
+		ConnectionHandler init1 = (ConnectionHandler) init;
 		try {
 			init1.handleReceiveSequenceNumber(netty.getReceiveSeqNumber());
 		} catch (IOException e) {
