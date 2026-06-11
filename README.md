@@ -64,7 +64,7 @@ server.start();
 
 ```xml
 <dependency>
-  <groupId>com.sac</groupId>
+  <groupId>com.melody</groupId>
   <artifactId>one_zero_four</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 </dependency>
