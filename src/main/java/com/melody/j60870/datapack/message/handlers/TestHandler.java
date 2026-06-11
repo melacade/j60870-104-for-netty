@@ -13,7 +13,7 @@ import static com.melody.j60870.datapack.data.APduNetty.ApciType.TESTFR_ACT;
 public class TestHandler extends com.melody.j60870.datapack.message.MessageHandler {
 	
 	@Override
-	protected void register() {
+	public void register() {
 		MainHandler.register(TESTFR_ACT, this);
 		MainHandler.register(APduNetty.ApciType.TESTFR_CON, this);
 	}

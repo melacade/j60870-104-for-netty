@@ -1,7 +1,8 @@
 package com.melody.j60870.datapack.data.ie;
 
+import com.melody.j60870.datapack.util.HexUtils;
 import io.netty.buffer.ByteBuf;
-import org.openmuc.j60870.internal.HexUtils;
+
 
 import java.io.IOException;
 

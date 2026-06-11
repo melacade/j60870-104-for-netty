@@ -13,7 +13,7 @@ import java.io.IOException;
 public class StartDtConHandler extends MessageHandler {
 	
 	@Override
-	protected void register() {
+	public void register() {
 		com.melody.j60870.datapack.message.MainHandler.register(APduNetty.ApciType.STARTDT_CON, this);
 	}
 	

@@ -12,7 +12,7 @@ public class EmptyHandler extends MessageHandler {
 	
 	
 	@Override
-	protected void register() {
+	public void register() {
 		MainHandler.register(APduNetty.ApciType.STARTDT_CON, this);
 		MainHandler.register(APduNetty.ApciType.TESTFR_CON, this);
 	}

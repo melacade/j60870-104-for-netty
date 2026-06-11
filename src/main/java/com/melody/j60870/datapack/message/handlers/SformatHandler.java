@@ -15,7 +15,7 @@ import static com.melody.j60870.datapack.data.APduNetty.ApciType.S_FORMAT;
 public class SformatHandler extends com.melody.j60870.datapack.message.MessageHandler {
 	
 	@Override
-	protected void register() {
+	public void register() {
 		com.melody.j60870.datapack.message.MainHandler.register(S_FORMAT, this);
 	}
 	

@@ -16,7 +16,7 @@ import static com.melody.j60870.datapack.data.APduNetty.ApciType.STARTDT_ACT;
 public class StartDtHandler extends MessageHandler {
 	
 	@Override
-	protected void register() {
+	public void register() {
 		com.melody.j60870.datapack.message.MainHandler.register(STARTDT_ACT, this);
 	}
 	

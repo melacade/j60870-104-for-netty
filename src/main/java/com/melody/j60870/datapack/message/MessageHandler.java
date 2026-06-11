@@ -11,7 +11,7 @@ public abstract class MessageHandler {
 	/**
 	 * 实现以注册对应的104报文类型
 	 */
-	protected abstract void register();
+	public abstract void register();
 	/**
 	 * 实现以在客户端调用
 	 *
