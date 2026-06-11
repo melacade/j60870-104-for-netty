@@ -12,7 +12,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
-import org.openmuc.j60870.ServerEventListener;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -29,7 +28,7 @@ public class Server {
 	
 	private final Map<ChannelId,SocketChannel> clients = new ConcurrentHashMap<>();
 	private ChannelFuture svr;
-	private NioEventLoopGroup boos;
+	private NioEventLoopGroup boss;
 	private NioEventLoopGroup worker;
 	private final int port;
 	private final InetAddress bindAddr;
@@ -62,10 +61,10 @@ public class Server {
 	 * @throws IOException if any kind of error occurs while creating the server socket.
 	 */
 	public void start() throws IOException, InterruptedException {
-		boos = new NioEventLoopGroup();
+		boss = new NioEventLoopGroup();
 		worker = new NioEventLoopGroup();
 		try {
-			server = new ServerBootstrap().channel(NioServerSocketChannel.class).group(boos, worker);
+			server = new ServerBootstrap().channel(NioServerSocketChannel.class).group(boss, worker);
 			server.childHandler(new ServerInit(settings, clients));
 			svr = server.bind(port).sync();
 			log.info("正在监听端口{}", port);
@@ -95,9 +94,9 @@ public class Server {
 			svr.channel().close().sync();
 			svr = null;
 		}
-		if (boos != null) {
-			boos.shutdownGracefully();
-			boos = null;
+		if (boss != null) {
+			boss.shutdownGracefully();
+			boss = null;
 		}
 		if (worker != null) {
 			worker.shutdownGracefully();

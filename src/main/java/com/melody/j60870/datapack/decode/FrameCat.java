@@ -8,7 +8,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 public class FrameCat extends LengthFieldBasedFrameDecoder {
 	
 	public FrameCat() {
-		super(255, 1, 1, 0, 0, true);
+		super(257, 1, 1, 0, 0, true);
 	}
 	
 }

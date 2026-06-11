@@ -91,8 +91,13 @@ public final class APduNetty {
         this.aSdu = aSdu;
     }
     
-    public static APduNetty decode(ByteBuf buf, ConnectionNettySettings settings) throws IOException {
+    public static APduNetty decode(ByteBuf buf, ConnectionNettySettings settings) throws IOException, NotValidFrameException, NotEnoughData {
 	    
+        if(buf.readableBytes() < 6) {
+        	// 数据不足，等待更多数据到来
+        	throw new NotEnoughData();
+        }
+
 	    if (buf.readByte() != START_FLAG) {
             throw new IOException("Message does not start with START flag (0x68). Broken connection.");
         }
@@ -109,7 +114,10 @@ public final class APduNetty {
                 int receiveSeqNum = seqNumFrom(aPduControlFields[2], aPduControlFields[3]);
                 
                 int aSduLength = length - CONTROL_FIELDS_LENGTH;
-                
+                if(aSduLength < buf.readableBytes()) {
+                	// 数据不足，等待更多数据到来
+                	throw new NotEnoughData();
+                }
                 return new APduNetty(sendSeqNum, receiveSeqNum, apciType, ASduNetty.decode(buf, settings, aSduLength));
             case S_FORMAT:
                 return new APduNetty(0, seqNumFrom(aPduControlFields[2], aPduControlFields[3]), apciType, null);
@@ -124,13 +132,13 @@ public final class APduNetty {
         return ((b1 & 0xfe) >> 1) + ((b2 & 0xff) << 7);
     }
     
-    private static int readApduLength(ByteBuf is) throws IOException {
+    private static int readApduLength(ByteBuf is) throws NotValidFrameException {
         int length = is.readUnsignedByte();
         
         if (length < MIN_APDU_LENGTH || length > MAX_APDU_LENGTH) {
             String msg = MessageFormat
                     .format("APDU has an invalid length must be between 4 and 253.\nReceived length was: {0}.", length);
-            throw new IOException(msg);
+            throw new NotValidFrameException("",msg);
         }
         return length;
     }

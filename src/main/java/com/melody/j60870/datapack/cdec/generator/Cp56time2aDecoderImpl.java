@@ -7,7 +7,7 @@ import com.melody.j60870.except.NotValidFrameException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import lombok.extern.slf4j.Slf4j;
-import org.openmuc.j60870.internal.HexUtils;
+import com.melody.j60870.datapack.util.HexUtils;
 
 import java.util.Calendar;
 import java.util.TimeZone;
