@@ -54,17 +54,19 @@ server.start();
 
 当前 `pom.xml` 中包含：
 
-- `org.openmuc:j60870:1.6.1`
+- `org.slf4j:slf4j-api:1.7.36`（可选依赖）
+- `org.slf4j:slf4j-log4j12:1.7.36`（可选依赖）
+- `org.projectlombok:lombok:1.18.26`（可选依赖）
 - `io.netty:netty-all:4.1.94.Final`（可选依赖）
-- `org.projectlombok:lombok:1.18.26`
 
-> 注意：`netty-all` 在本项目中被设置为可选依赖。如果你把本项目作为库引用，请在目标项目中显式声明你希望使用的 Netty 版本，以避免版本冲突。
+> 注意：本项目并未直接依赖 `org.openmuc:j60870`，而是提供了自己的 IEC 60870-5-104 编解码和 Netty 通信框架。
+> `netty-all` 在本项目中被设置为可选依赖。如果你把本项目作为库引用，请在目标项目中显式声明所需的 Netty 版本，以避免版本冲突。
 
 ### 目标项目引用示例
 
 ```xml
 <dependency>
-  <groupId>com.sac</groupId>
+  <groupId>com.melody</groupId>
   <artifactId>one_zero_four</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 </dependency>
